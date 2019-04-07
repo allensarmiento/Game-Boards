@@ -1,14 +1,15 @@
-var ctx = document.getElementById("ctx").getContext("2d");
+var canvas = document.getElementById("ctx");
+var ctx = canvas.getContext("2d");
 ctx.font = '30px Arial';
 
 var socket = io();
 
 /* Variables */
 var canvas_width = 1300;
-var canvas_height = 700;
+var canvas_height = 750;
 var icon_width = 200;
 var icon_height = 180;
-var spacing = 50;
+var spacing = 65;
 
 var x_team_pos = 25;
 var y_icon_pos = 25;
