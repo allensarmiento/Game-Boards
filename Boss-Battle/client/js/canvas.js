@@ -37,7 +37,8 @@ boss_img_paths.push(team_3_boss_path);
 class Team {
   constructor(id) {
     this.id = id; // id starts at 0
-    this.health = 300;
+    this.total_health = 300;
+    this.current_health = 300;
 
     this.image = new Image();
     this.image.src = team_img_paths[id];
@@ -57,24 +58,13 @@ class Team {
                   0, 0, this.boss.width, this.boss.height,
                   x_boss_pos, y_icon_pos + (icon_height*this.id) + (spacing*this.id),
                   icon_width, icon_height);
+    ctx.fillStyle = "red";
+    ctx.fillRect(x_boss_pos, y_icon_pos + (icon_height*(this.id+1)) + (spacing*this.id) + 10, icon_width, 25);
   }
 
   attack() {
 
   }
-}
-
-/* Draw the initial board */
-function draw_game_screen() {
-  var background_img = new Image();
-  background_img.onload = function() {
-    ctx.drawImage(background_img,
-                  0, 0, background_img.width, background_img.height,
-                  0, 0, canvas_width, canvas_height);
-  };
-  background_img.src = '/client/images/raceBackground.jpg';
-
-  ctx.strokeRect(0, 0, canvas_width, canvas_height);
 }
 
 /* Initialize the teams */
