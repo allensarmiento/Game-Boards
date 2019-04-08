@@ -12,74 +12,38 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
-var bullet_x_pos = 230;
-var bullet_y_team_1 = 100;
-var bullet_y_team_2 = 350;
-var bullet_y_team_3 = 600;
+var canvas_width = 1300,
+    canvas_height = 750;
+var icon_width = 200,
+    icon_height = 180,
+    spacing = 65;
 
-var Entity = function() {
-  var self = {
-    x: 230, y: 100,
-    speedX: 10,
-    id: "",
-  };
-  self.update = function() {
-    self.updatePosition();
-  };
-  self.updatePosition = function() {
-    self.x += self.speedX;
-  };
+class Team {
+  constructor(id) {
+    this.id = id;
+    this.health = icon_width;
 
-  return self;
-};
-
-var Bullet = function(y) {
-  var self = Entity();
-  self.id = Math.random();
-  self.y = y;
-
-  self.timer = 0;
-  self.toRemove = false;
-
-  var super_update = self.update;
-  self.update = function() {
-    if (self.timer++ > 100) {
-      self.toRemove = true;
-    }
-    super_update();
-  };
-  Bullet.list[self.id] = self;
-
-  return self;
-};
-Bullet.list = {};
-
-Bullet.update = function() {
-  var pack = [];
-
-  for (var i in Bullet.list) {
-    var bullet = Bullet.list[i];
-    bullet.update();
-    pack.push({
-      x: bullet.x,
-      y: bullet.y,
-    });
+    this.x_team_pos = 25;
+    this.y_icon_pos = 25 + (icon_height*id) + (spacing*id);
+    this.x_boss_pos = 1075;
   }
-
-  return pack;
-};
+}
+let teams = [];
+teams.push(new Team(0));
+teams.push(new Team(1));
+teams.push(new Team(2));
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket) {
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
 
-  socket.on('attack', function(id) {
-    console.log('Boss ' + id + ' taking damage');
-    switch(id) {
-      case 0: Bullet(bullet_y_team_1); break;
-      case 1: Bullet(bullet_y_team_2); break;
-      case 2: Bullet(bullet_y_team_3); break;
+  socket.on('attack', function(pack) {
+    for (let i = 0; i < teams.length; i++) {
+      teams[i].health = pack.teams[i].health;
+      teams[i].x_team_pos = pack.teams[i].x_team_pos;
+      teams[i].y_icon_pos = pack.teams[i].y_icon_pos;
+      teams[i].x_boss_pos = pack.teams[i].x_boss_pos;
     }
   });
 
@@ -88,13 +52,14 @@ io.sockets.on('connection', function(socket) {
 	});
 });
 
+/* Check for updates */
 setInterval(function(){
 	var pack = {
-    bullet: Bullet.update(),
+    teams: teams,
 	};
 
 	for(var i in SOCKET_LIST) {
 		var socket = SOCKET_LIST[i];
-		socket.emit('newPositions',pack);
+		socket.emit('updates', pack);
 	}
 },1000/25);

@@ -5,16 +5,13 @@ ctx.font = '30px Arial';
 var socket = io();
 
 /* Variables */
-var canvas_width = 1300;
-var canvas_height = 750;
-var icon_width = 200;
-var icon_height = 180;
-var spacing = 65;
+var canvas_width = 1300,
+    canvas_height = 750;
+var icon_width = 200,
+    icon_height = 180,
+    spacing = 65;
 
-var x_team_pos = 25;
-var y_icon_pos = 25;
-var x_boss_pos = 1075;
-
+/* Images */
 var team_1_img_path = '/client/images/clock.png';
 var team_2_img_path = '/client/images/music-note.png';
 var team_3_img_path = '/client/images/penguin.png';
@@ -36,36 +33,32 @@ boss_img_paths.push(team_3_boss_path);
 /* Team class */
 class Team {
   constructor(id) {
-    this.id = id; // id starts at 0
-    this.total_health = 300;
-    this.current_health = 300;
+    this.id = id;
+    this.health = icon_width;
+    this.x_team_pos = 25;
+    this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
+    this.x_boss_pos = 1075;
 
     this.image = new Image();
-    this.image.src = team_img_paths[id];
+    this.image.src = team_img_paths[this.id];
 
     this.boss = new Image();
-    this.boss.src = boss_img_paths[id];
-
-    this.health_bar = icon_width;
+    this.boss.src = boss_img_paths[this.id];
   }
 
   drawImage() {
     ctx.drawImage(this.image,
                   0, 0, this.image.width, this.image.height,
-                  x_team_pos, y_icon_pos + (icon_height*this.id) + (spacing*this.id), icon_width, icon_height);
+                  this.x_team_pos, this.y_icon_pos, icon_width, icon_height);
   }
 
   drawBoss() {
     ctx.drawImage(this.boss,
                   0, 0, this.boss.width, this.boss.height,
-                  x_boss_pos, y_icon_pos + (icon_height*this.id) + (spacing*this.id),
+                  this.x_boss_pos, this.y_icon_pos,
                   icon_width, icon_height);
     ctx.fillStyle = "red";
-    ctx.fillRect(x_boss_pos, y_icon_pos + (icon_height*(this.id+1)) + (spacing*this.id) + 10, this.health_bar, 25);
-  }
-
-  attack() {
-
+    ctx.fillRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, this.health, 25);
   }
 }
 
@@ -76,8 +69,6 @@ for (let i = 0; i < 3; i++) {
 }
 
 window.onload = function() {
-  //draw_game_screen();
-
   for (let i = 0; i < 3; i++) {
     teams[i].drawImage();
     teams[i].drawBoss();
@@ -92,27 +83,23 @@ function redrawBoard() {
   }
 }
 
-socket.on('newPositions', function(data) {
-  ctx.clearRect(0 + x_team_pos + icon_width, 0,
-                canvas_width - ((icon_width+x_team_pos) * 2), canvas_height);
-  for (var i = 0; i < data.bullet.length; i++) {
-    if (data.bullet[i].x < canvas_width - icon_width - x_team_pos) {
-      ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10);
-    }
-  }
-});
-
-function wait() {
-  setTimeout(function() {
-    console.log('waiting');
-  }, 5000);
-}
-
 function Attack(id) {
-  socket.emit('attack', id);
-  ctx.fillStyle = "red";
-  if (teams[id].health_bar >= 0) {
-    teams[id].health_bar -= 5;
-    redrawBoard();
-  }
+  teams[id].health -= 5;
+  var pack = {
+    teams: teams,
+  };
+  socket.emit('attack', pack);
 }
+
+socket.on('updates', function(pack) {
+  for (let i = 0; i < teams.length; i++) {
+    teams[i].health = pack.teams[i].health;
+    teams[i].x_team_pos = pack.teams[i].x_team_pos;
+    teams[i].y_icon_pos = pack.teams[i].y_icon_pos;
+    teams[i].x_boss_pos = pack.teams[i].x_boss_pos;
+  }
+
+  /*ctx.clearRect(0 + this.x_team_pos + icon_width, 0,
+                canvas_width - ((icon_width+this.x_team_pos) * 2), canvas_height);*/
+  redrawBoard();
+});
