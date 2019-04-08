@@ -76,6 +76,12 @@ Bullet.update = function() {
   return pack;
 };
 
+function wait() {
+  setTimeout(function() {
+    console.log('waiting');
+  }, 5000);
+}
+
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
 	socket.id = Math.random();
@@ -83,9 +89,11 @@ io.sockets.on('connection', function(socket){
 
   socket.on('attack', function(num) {
     console.log(num);
+    let pack = [];
 
     for (let i = 0; i < 5; i++) {
       Bullet(bullet_y_team_1);
+      console.log('created bullet' + i);
     }
   });
 
@@ -99,7 +107,7 @@ setInterval(function(){
     bullet: Bullet.update(),
 	};
 
-	for(var i in SOCKET_LIST){
+	for(var i in SOCKET_LIST) {
 		var socket = SOCKET_LIST[i];
 		socket.emit('newPositions',pack);
 	}
