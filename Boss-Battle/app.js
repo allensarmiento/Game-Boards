@@ -55,13 +55,6 @@ var Bullet = function(y) {
 Bullet.list = {};
 
 Bullet.update = function() {
-  if(Math.random() < 0.1){
-		//Bullet(Math.random()*360);
-    //Bullet(bullet_y_team_1);
-    //Bullet(bullet_y_team_2);
-    //Bullet(bullet_y_team_3);
-	}
-
   var pack = [];
 
   for (var i in Bullet.list) {
@@ -77,7 +70,7 @@ Bullet.update = function() {
 };
 
 var io = require('socket.io')(serv,{});
-io.sockets.on('connection', function(socket){
+io.sockets.on('connection', function(socket) {
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
 
