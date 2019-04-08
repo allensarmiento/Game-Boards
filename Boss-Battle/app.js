@@ -12,12 +12,15 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
+/////////////////////////////////////
 var canvas_width = 1300,
     canvas_height = 750;
 var icon_width = 200,
     icon_height = 180,
     spacing = 65;
+/////////////////////////////////////
 
+/////////////////////////////////////
 class Team {
   constructor(id) {
     this.id = id;
@@ -32,6 +35,20 @@ let teams = [];
 teams.push(new Team(0));
 teams.push(new Team(1));
 teams.push(new Team(2));
+/////////////////////////////////////
+
+/////////////////////////////////////
+class Bullet {
+  constructor(team_id) {
+    this.team_id = team_id;
+    this.num = 0;
+    this.x_pos = 230;
+    this.y_pos = 100 + (250*this.team_id);
+  }
+}
+
+let bullets = [];
+/////////////////////////////////////
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket) {
@@ -45,6 +62,10 @@ io.sockets.on('connection', function(socket) {
       teams[i].y_icon_pos = pack.teams[i].y_icon_pos;
       teams[i].x_boss_pos = pack.teams[i].x_boss_pos;
     }
+
+    bullets.push(new Bullet(pack.bullet_id));
+
+    console.log('In server, bullets is ' + bullets.length);
   });
 
 	socket.on('disconnect',function(){
@@ -53,9 +74,16 @@ io.sockets.on('connection', function(socket) {
 });
 
 /* Check for updates */
-setInterval(function(){
+setInterval(function() {
+  if (bullets.length > 0) {
+    for (var i = 0; i < bullets.length; i++) {
+      bullets[i].x_pos += 5;
+    }
+  }
+
 	var pack = {
     teams: teams,
+    bullets: bullets,
 	};
 
 	for(var i in SOCKET_LIST) {

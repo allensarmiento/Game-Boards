@@ -4,6 +4,7 @@ ctx.font = '30px Arial';
 
 var socket = io();
 
+/////////////////////////////////////
 /* Variables */
 var canvas_width = 1300,
     canvas_height = 750;
@@ -29,8 +30,9 @@ var boss_img_paths = [];
 boss_img_paths.push(team_1_boss_path);
 boss_img_paths.push(team_2_boss_path);
 boss_img_paths.push(team_3_boss_path);
+/////////////////////////////////////
 
-/* Team class */
+/////////////////////////////////////
 class Team {
   constructor(id) {
     this.id = id;
@@ -67,9 +69,30 @@ let teams = [];
 for (let i = 0; i < 3; i++) {
   teams.push(new Team(i));
 }
+/////////////////////////////////////
+
+/////////////////////////////////////
+class Bullet {
+  constructor(team_id) {
+    this.team_id = team_id;
+    this.num = 0;
+    this.x_pos = 230;
+    this.y_pos = 100 + (250*this.team_id);
+  }
+
+  drawBullet() {
+    if (this.x_pos < canvas_width - icon_width - 25) {
+      ctx.fillStyle = "blue";
+      ctx.fillRect(this.x_pos-5, this.y_pos-5, 10, 10);
+    }
+  }
+}
+
+let bullets = [];
+/////////////////////////////////////
 
 window.onload = function() {
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < teams.length; i++) {
     teams[i].drawImage();
     teams[i].drawBoss();
   }
@@ -77,7 +100,7 @@ window.onload = function() {
 
 function redrawBoard() {
   ctx.clearRect(0, 0, canvas_width, canvas_height);
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < teams.length; i++) {
     teams[i].drawImage();
     teams[i].drawBoss();
   }
@@ -85,8 +108,11 @@ function redrawBoard() {
 
 function Attack(id) {
   teams[id].health -= 5;
+  //bullets.push(new Bullet(id));
+  let bullet_id = id;
   var pack = {
     teams: teams,
+    bullet_id: bullet_id,
   };
   socket.emit('attack', pack);
 }
@@ -99,7 +125,14 @@ socket.on('updates', function(pack) {
     teams[i].x_boss_pos = pack.teams[i].x_boss_pos;
   }
 
-  /*ctx.clearRect(0 + this.x_team_pos + icon_width, 0,
-                canvas_width - ((icon_width+this.x_team_pos) * 2), canvas_height);*/
+  console.log('In client, bullets is ' + bullets.length);
+
   redrawBoard();
+
+  for (let i = 0; i < pack.bullets.length; i++) {
+    if (pack.bullets[i].x_pos < canvas_width - icon_width - 25) {
+      ctx.fillStyle = "blue";
+      ctx.fillRect(pack.bullets[i].x_pos-5, pack.bullets[i].y_pos-5, 10, 10);
+    }
+  }
 });
