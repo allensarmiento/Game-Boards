@@ -45,6 +45,8 @@ class Team {
 
     this.boss = new Image();
     this.boss.src = boss_img_paths[id];
+
+    this.health_bar = icon_width;
   }
 
   drawImage() {
@@ -59,7 +61,7 @@ class Team {
                   x_boss_pos, y_icon_pos + (icon_height*this.id) + (spacing*this.id),
                   icon_width, icon_height);
     ctx.fillStyle = "red";
-    ctx.fillRect(x_boss_pos, y_icon_pos + (icon_height*(this.id+1)) + (spacing*this.id) + 10, icon_width, 25);
+    ctx.fillRect(x_boss_pos, y_icon_pos + (icon_height*(this.id+1)) + (spacing*this.id) + 10, this.health_bar, 25);
   }
 
   attack() {
@@ -82,15 +84,35 @@ window.onload = function() {
   }
 };
 
+function redrawBoard() {
+  ctx.clearRect(0, 0, canvas_width, canvas_height);
+  for (let i = 0; i < 3; i++) {
+    teams[i].drawImage();
+    teams[i].drawBoss();
+  }
+}
+
 socket.on('newPositions', function(data) {
   ctx.clearRect(0 + x_team_pos + icon_width, 0,
                 canvas_width - ((icon_width+x_team_pos) * 2), canvas_height);
   for (var i = 0; i < data.bullet.length; i++) {
-    if (data.bullet[i].x < canvas_width - icon_width - x_team_pos)
+    if (data.bullet[i].x < canvas_width - icon_width - x_team_pos) {
       ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10);
+    }
   }
 });
 
-function Attack() {
-  socket.emit('attack', 'attacking');
+function wait() {
+  setTimeout(function() {
+    console.log('waiting');
+  }, 5000);
+}
+
+function Attack(id) {
+  socket.emit('attack', id);
+  ctx.fillStyle = "red";
+  if (teams[id].health_bar >= 0) {
+    teams[id].health_bar -= 5;
+    redrawBoard();
+  }
 }
