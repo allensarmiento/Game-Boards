@@ -1,5 +1,5 @@
 body {
-  background: black;
+  background: rgb(50, 50, 50);
 }
 
 #ctx {
@@ -8,4 +8,8 @@ body {
   background: url('../images/raceBackground.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+input, button {
+  margin: 10px;
 }
