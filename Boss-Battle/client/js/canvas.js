@@ -30,6 +30,15 @@ var boss_img_paths = [];
 boss_img_paths.push(team_1_boss_path);
 boss_img_paths.push(team_2_boss_path);
 boss_img_paths.push(team_3_boss_path);
+
+/* Team Names */
+var team_1_name = 'Team 1',
+    team_2_name = 'Team 2',
+    team_3_name = 'Team 3';
+var team_names = [];
+team_names.push(team_1_name);
+team_names.push(team_2_name);
+team_names.push(team_3_name);
 /////////////////////////////////////
 
 /////////////////////////////////////
@@ -52,6 +61,9 @@ class Team {
     ctx.drawImage(this.image,
                   0, 0, this.image.width, this.image.height,
                   this.x_team_pos, this.y_icon_pos, icon_width, icon_height);
+
+    ctx.fillStyle = "black";
+    ctx.fillText(team_names[this.id], this.x_team_pos + icon_width + 10, this.y_icon_pos + 25)
   }
 
   drawBoss() {
@@ -63,6 +75,10 @@ class Team {
     ctx.strokeRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, icon_width, 25);
     ctx.fillStyle = "red";
     ctx.fillRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, this.health, 25);
+
+    ctx.fillStyle = "black";
+    ctx.font = '20px Arial';
+    ctx.fillText("Health: " + this.health, this.x_boss_pos - 150, this.y_icon_pos + icon_height + 25);
   }
 }
 
