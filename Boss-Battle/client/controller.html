@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Boss Battle</title>
+    <link rel="stylesheet" type="text/css" href="/client/css/master.css">
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  </head>
+  <body>
+    <canvas id="ctx" width="1300" height="750" style="border:1px solid #000000;"></canvas>
+
+    <input type="number" name="team-1" id="team-1">
+    <button onclick="Attack(0, document.getElementById('team-1').value);">Team 1 Attack</button><br/>
+
+    <input type="number" name="team-2" id="team-2">
+    <button onclick="Attack(1, document.getElementById('team-2').value);">Team 2 Attack</button><br />
+
+    <input type="number" name="team-3" id="team-3">
+    <button onclick="Attack(2, document.getElementById('team-3').value);">Team 3 Attack</button><br />
+
+    <button onclick="Reset();">Reset</button>
+
+    <script src="/client/js/canvas.js"></script>
+    <script src="/client/js/keyboard-input.js"></script>
+  </body>
+</html>
