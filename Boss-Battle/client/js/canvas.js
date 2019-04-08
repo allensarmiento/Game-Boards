@@ -90,3 +90,7 @@ socket.on('newPositions', function(data) {
       ctx.fillRect(data.bullet[i].x-5, data.bullet[i].y-5, 10, 10);
   }
 });
+
+function Attack() {
+  socket.emit('attack', 'attacking');
+}

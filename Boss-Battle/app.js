@@ -54,16 +54,12 @@ var Bullet = function(y) {
 };
 Bullet.list = {};
 
-var Team = function() {
-  Bullet.list = {};
-};
-
 Bullet.update = function() {
   if(Math.random() < 0.1){
 		//Bullet(Math.random()*360);
-    Bullet(bullet_y_team_1);
-    Bullet(bullet_y_team_2);
-    Bullet(bullet_y_team_3);
+    //Bullet(bullet_y_team_1);
+    //Bullet(bullet_y_team_2);
+    //Bullet(bullet_y_team_3);
 	}
 
   var pack = [];
@@ -84,6 +80,14 @@ var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
+
+  socket.on('attack', function(num) {
+    console.log(num);
+
+    for (let i = 0; i < 5; i++) {
+      Bullet(bullet_y_team_1);
+    }
+  });
 
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
