@@ -12,6 +12,11 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
+var bullet_x_pos = 230;
+var bullet_y_team_1 = 100;
+var bullet_y_team_2 = 350;
+var bullet_y_team_3 = 600;
+
 var Entity = function() {
   var self = {
     x: 230, y: 100,
@@ -28,9 +33,10 @@ var Entity = function() {
   return self;
 };
 
-var Bullet = function() {
+var Bullet = function(y) {
   var self = Entity();
   self.id = Math.random();
+  self.y = y;
 
   self.timer = 0;
   self.toRemove = false;
@@ -48,9 +54,16 @@ var Bullet = function() {
 };
 Bullet.list = {};
 
+var Team = function() {
+  Bullet.list = {};
+};
+
 Bullet.update = function() {
   if(Math.random() < 0.1){
-		Bullet(Math.random()*360);
+		//Bullet(Math.random()*360);
+    Bullet(bullet_y_team_1);
+    Bullet(bullet_y_team_2);
+    Bullet(bullet_y_team_3);
 	}
 
   var pack = [];
