@@ -59,6 +59,8 @@ class Team {
                   0, 0, this.boss.width, this.boss.height,
                   this.x_boss_pos, this.y_icon_pos,
                   icon_width, icon_height);
+    ctx.strokeStyle = "black";
+    ctx.strokeRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, icon_width, 25);
     ctx.fillStyle = "red";
     ctx.fillRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, this.health, 25);
   }
@@ -69,26 +71,6 @@ let teams = [];
 for (let i = 0; i < 3; i++) {
   teams.push(new Team(i));
 }
-/////////////////////////////////////
-
-/////////////////////////////////////
-class Bullet {
-  constructor(team_id) {
-    this.team_id = team_id;
-    this.num = 0;
-    this.x_pos = 230;
-    this.y_pos = 100 + (250*this.team_id);
-  }
-
-  drawBullet() {
-    if (this.x_pos < canvas_width - icon_width - 25) {
-      ctx.fillStyle = "blue";
-      ctx.fillRect(this.x_pos-5, this.y_pos-5, 10, 10);
-    }
-  }
-}
-
-let bullets = [];
 /////////////////////////////////////
 
 window.onload = function() {
@@ -107,14 +89,17 @@ function redrawBoard() {
 }
 
 function Attack(id) {
-  teams[id].health -= 5;
-  //bullets.push(new Bullet(id));
+  //teams[id].health -= 5;
   let bullet_id = id;
   var pack = {
     teams: teams,
     bullet_id: bullet_id,
   };
   socket.emit('attack', pack);
+}
+
+function Reset() {
+  socket.emit('reset', 'resetting board');
 }
 
 socket.on('updates', function(pack) {
@@ -124,8 +109,6 @@ socket.on('updates', function(pack) {
     teams[i].y_icon_pos = pack.teams[i].y_icon_pos;
     teams[i].x_boss_pos = pack.teams[i].x_boss_pos;
   }
-
-  console.log('In client, bullets is ' + bullets.length);
 
   redrawBoard();
 

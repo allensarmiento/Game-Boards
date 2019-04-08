@@ -27,7 +27,15 @@ class Team {
     this.health = icon_width;
 
     this.x_team_pos = 25;
-    this.y_icon_pos = 25 + (icon_height*id) + (spacing*id);
+    this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
+    this.x_boss_pos = 1075;
+  }
+
+  reset() {
+    this.health = icon_width;
+
+    this.x_team_pos = 25;
+    this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
     this.x_boss_pos = 1075;
   }
 }
@@ -68,6 +76,13 @@ io.sockets.on('connection', function(socket) {
     console.log('In server, bullets is ' + bullets.length);
   });
 
+  socket.on('reset', function(msg) {
+    console.log(msg);
+    for (let i = 0; i < teams.length; i++) {
+      teams[i].reset();
+    }
+  });
+
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
 	});
@@ -76,8 +91,14 @@ io.sockets.on('connection', function(socket) {
 /* Check for updates */
 setInterval(function() {
   if (bullets.length > 0) {
-    for (var i = 0; i < bullets.length; i++) {
-      bullets[i].x_pos += 5;
+    for (i in bullets) {
+      if (bullets[i].x_pos < canvas_width - icon_width) {
+        bullets[i].x_pos += 10;
+      } else {
+        teams[bullets[i].team_id].health -= 2;
+        bullets.splice(i, 1);
+        console.log('bullets: ' + bullets.length);
+      }
     }
   }
 
