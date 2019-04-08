@@ -95,7 +95,10 @@ setInterval(function() {
       if (bullets[i].x_pos < canvas_width - icon_width) {
         bullets[i].x_pos += 10;
       } else {
-        teams[bullets[i].team_id].health -= 2;
+        for (let j = 0; j < 2; j++) {
+          if (teams[bullets[i].team_id].health > 0)
+            teams[bullets[i].team_id].health--;
+        }
         bullets.splice(i, 1);
         console.log('bullets: ' + bullets.length);
       }

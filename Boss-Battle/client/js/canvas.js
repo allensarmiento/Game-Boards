@@ -88,14 +88,15 @@ function redrawBoard() {
   }
 }
 
-function Attack(id) {
-  //teams[id].health -= 5;
-  let bullet_id = id;
-  var pack = {
-    teams: teams,
-    bullet_id: bullet_id,
-  };
-  socket.emit('attack', pack);
+function Attack(id, damage) {
+  for (let i = 0; i < damage; i++) {
+    let bullet_id = id;
+    var pack = {
+      teams: teams,
+      bullet_id: bullet_id,
+    };
+    socket.emit('attack', pack);
+  }
 }
 
 function Reset() {
