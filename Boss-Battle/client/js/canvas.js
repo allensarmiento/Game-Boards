@@ -129,8 +129,10 @@ socket.on('updates', function(pack) {
 
   redrawBoard();
 
+  /* Draw bullets */
   for (let i = 0; i < pack.bullets.length; i++) {
-    if (pack.bullets[i].x_pos < canvas_width - icon_width - 25) {
+    if (pack.bullets[i].x_pos < canvas_width - icon_width - 25 &&
+        pack.bullets[i].x_pos > icon_width + 25) {
       ctx.fillStyle = "blue";
       ctx.fillRect(pack.bullets[i].x_pos-5, pack.bullets[i].y_pos-5, 10, 10);
     }

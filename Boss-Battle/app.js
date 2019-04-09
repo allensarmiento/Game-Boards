@@ -56,6 +56,31 @@ class Bullet {
 }
 
 let bullets = [];
+
+function adjustBulletPosition(team_bullets) {
+  let team_1_bullet = 230,
+      team_2_bullet = 230,
+      team_3_bullet = 230;
+
+  for (var i in team_bullets) {
+    switch(bullets[i].team_id) {
+      case 0:
+        bullets[i].x_pos = team_1_bullet;
+        team_1_bullet -= 15;
+        break;
+      case 1:
+        bullets[i].x_pos = team_2_bullet;
+        team_2_bullet -= 15;
+        break;
+      case 2:
+        bullets[i].x_pos = team_3_bullet;
+        team_3_bullet -= 15;
+        break;
+    }
+  }
+
+  return team_bullets;
+}
 /////////////////////////////////////
 
 var io = require('socket.io')(serv,{});
@@ -72,6 +97,7 @@ io.sockets.on('connection', function(socket) {
     }
 
     bullets.push(new Bullet(pack.bullet_id));
+    bullets = adjustBulletPosition(bullets);
 
     console.log('In server, bullets is ' + bullets.length);
   });
@@ -93,7 +119,7 @@ setInterval(function() {
   if (bullets.length > 0) {
     for (i in bullets) {
       if (bullets[i].x_pos < canvas_width - icon_width) {
-        bullets[i].x_pos += 10;
+        bullets[i].x_pos += 25;
       } else {
         if (teams[bullets[i].team_id].health > 0)
           teams[bullets[i].team_id].health--;
