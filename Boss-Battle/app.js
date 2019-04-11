@@ -117,7 +117,7 @@ io.sockets.on('connection', function(socket) {
 /* Check for updates */
 setInterval(function() {
   if (bullets.length > 0) {
-    for (i in bullets) {
+    for (var i in bullets) {
       if (bullets[i].x_pos < canvas_width - icon_width) {
         bullets[i].x_pos += 25;
       } else {
