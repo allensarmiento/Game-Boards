@@ -12,20 +12,19 @@ var icon_width = 200,
     icon_height = 180,
     spacing = 65;
 
-/* Images */
+/* Team Images */
 var team_1_img_path = '/client/images/clock.png';
 var team_2_img_path = '/client/images/music-note.png';
 var team_3_img_path = '/client/images/penguin.png';
-
 var team_img_paths = [];
 team_img_paths.push(team_1_img_path);
 team_img_paths.push(team_2_img_path);
 team_img_paths.push(team_3_img_path);
 
+/* Boss Images */
 var team_1_boss_path = '/client/images/clock.png';
 var team_2_boss_path = '/client/images/music-note.png';
 var team_3_boss_path = '/client/images/penguin.png';
-
 var boss_img_paths = [];
 boss_img_paths.push(team_1_boss_path);
 boss_img_paths.push(team_2_boss_path);
@@ -45,7 +44,7 @@ team_names.push(team_3_name);
 class Team {
   constructor(id) {
     this.id = id;
-    this.health = icon_width;
+    this.health = icon_width + 100;
     this.x_team_pos = 25;
     this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
     this.x_boss_pos = 1075;
@@ -57,6 +56,7 @@ class Team {
     this.boss.src = boss_img_paths[this.id];
   }
 
+  // Draws team image
   drawImage() {
     ctx.drawImage(this.image,
                   0, 0, this.image.width, this.image.height,
@@ -66,19 +66,24 @@ class Team {
     ctx.fillText(team_names[this.id], this.x_team_pos + icon_width + 10, this.y_icon_pos + 25)
   }
 
+  // Draws boss image and health
   drawBoss() {
     ctx.drawImage(this.boss,
                   0, 0, this.boss.width, this.boss.height,
                   this.x_boss_pos, this.y_icon_pos,
                   icon_width, icon_height);
+    
+    // Health outer
     ctx.strokeStyle = "black";
-    ctx.strokeRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, icon_width, 25);
+    ctx.strokeRect(this.x_boss_pos - 100, this.y_icon_pos + icon_height + 10, icon_width + 100, 25);
+
+    // Health drawing
     ctx.fillStyle = "red";
-    ctx.fillRect(this.x_boss_pos, this.y_icon_pos + icon_height + 10, this.health, 25);
+    ctx.fillRect(this.x_boss_pos - 100, this.y_icon_pos + icon_height + 10, this.health, 25);
 
     ctx.fillStyle = "black";
     ctx.font = '20px Arial';
-    ctx.fillText("Health: " + this.health, this.x_boss_pos - 150, this.y_icon_pos + icon_height + 25);
+    ctx.fillText("Health: " + this.health, this.x_boss_pos - 150 - 100, this.y_icon_pos + icon_height + 25);
   }
 }
 
