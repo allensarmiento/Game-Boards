@@ -24,7 +24,7 @@ var icon_width = 200,
 class Team {
   constructor(id) {
     this.id = id;
-    this.health = icon_width;
+    this.health = icon_width + 100; // Max health: 300
 
     this.x_team_pos = 25;
     this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
@@ -32,7 +32,7 @@ class Team {
   }
 
   reset() {
-    this.health = icon_width;
+    this.health = icon_width + 100;
 
     this.x_team_pos = 25;
     this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
