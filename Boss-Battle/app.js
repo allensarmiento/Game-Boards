@@ -1,3 +1,4 @@
+// ============ Setup for Sockets ================
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
@@ -12,16 +13,16 @@ console.log("Server started.");
 
 var SOCKET_LIST = {};
 
-/////////////////////////////////////
+// ========= Main Variables ===========
 var canvas_width = 1300,
     canvas_height = 750;
 var icon_width = 200,
     icon_height = 180,
     spacing = 65;
-/////////////////////////////////////
 
-/////////////////////////////////////
+// ========== Team class =========
 class Team {
+  // Constructor
   constructor(id) {
     this.id = id;
     this.health = icon_width + 100; // Max health: 300
@@ -30,7 +31,8 @@ class Team {
     this.y_icon_pos = 25 + (icon_height*this.id) + (spacing*this.id);
     this.x_boss_pos = 1075;
   }
-
+  
+  // Resets the team's current points
   reset() {
     this.health = icon_width + 100;
 
@@ -39,13 +41,14 @@ class Team {
     this.x_boss_pos = 1075;
   }
 }
+
+// Adding teams
 let teams = [];
 teams.push(new Team(0));
 teams.push(new Team(1));
 teams.push(new Team(2));
-/////////////////////////////////////
 
-/////////////////////////////////////
+// =========== Bullet class ===============
 class Bullet {
   constructor(team_id) {
     this.team_id = team_id;
@@ -81,13 +84,13 @@ function adjustBulletPosition(team_bullets) {
 
   return team_bullets;
 }
-/////////////////////////////////////
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket) {
 	socket.id = Math.random();
 	SOCKET_LIST[socket.id] = socket;
 
+  // Listen for attack function
   socket.on('attack', function(pack) {
     for (let i = 0; i < teams.length; i++) {
       teams[i].health = pack.teams[i].health;
@@ -102,6 +105,7 @@ io.sockets.on('connection', function(socket) {
     console.log('In server, bullets is ' + bullets.length);
   });
 
+  // Listen for reset button pressed
   socket.on('reset', function(msg) {
     console.log(msg);
     for (let i = 0; i < teams.length; i++) {
@@ -109,12 +113,13 @@ io.sockets.on('connection', function(socket) {
     }
   });
 
+  // Listen for disconnected sockets
 	socket.on('disconnect',function(){
 		delete SOCKET_LIST[socket.id];
 	});
 });
 
-/* Check for updates */
+// Update interval
 setInterval(function() {
   if (bullets.length > 0) {
     for (var i in bullets) {
